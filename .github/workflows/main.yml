@@ -1,0 +1,71 @@
+模試名,申込開始日,実施日,成績公開日
+第１回全統記述,4/1（水）,5/10（日）,6/15（月）
+第２回全統記述,6/17（水）,8/23（日）,10/13（火）
+第３回全統記述,9/16（水）,10/4（日）,11/20（金）
+第１回全統共テ,4/1（水）,5/3（日）,5/29（金）
+第２回全統共テ,6/17（水）,7/26（日）,9/7（月）
+第３回全統共テ,9/16（水）,10/18（日）,11/16（月）
+全統プレ共テ,9/16（水）,11/15（日）,12/17（木）
+第１回駿台全国,4/2（木）,5/31（日）,7/3（金）
+第２回駿台全国,8/14（金）,9/27（日）,10/31（土）
+第１回駿台ベネッセ共テ,6/1（月）,9/13（日）,11/2（月）
+第２回駿台ベネッセ記述,8/14（金）,10/11（日）,11/30（月）
+第３回駿台ベネッセ共テ,9/7（月）,11/1（日）,12/11（金）
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>模試管理システム</title>
+    <style>
+        body { font-family: 'Segoe UI', 'Yu Gothic UI', sans-serif; margin: 20px; background: #f5f7fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input { padding: 10px; width: 70%; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: center; }
+        th { background: #007bff; color: white; }
+        tr:nth-child(even) { background: #fafafa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>模試スケジュール検索</h2>
+        <input type="text" id="searchInput" placeholder="全統 など入力...">
+        <button onclick="search()">検索</button>
+        <table id="resultTable">
+            <thead>
+                <tr><th>模試名</th><th>申込開始</th><th>実施日</th><th>成績公開</th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let allMoshi = [];
+
+        // CSVファイルを読み込む
+        fetch('moshi.csv')
+            .then(res => res.text())
+            .then(data => {
+                const lines = data.trim().split('\n');
+                allMoshi = lines.map(line => {
+                    const [name, start, date, res] = line.split(',');
+                    return { name, start, date, res };
+                });
+            });
+
+        function search() {
+            const query = document.getElementById('searchInput').value;
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = "";
+
+            const results = allMoshi.filter(m => m.name.includes(query));
+            results.forEach(m => {
+                const row = `<tr><td>${m.name}</td><td>${m.start}</td><td>${m.date}</td><td>${m.res}</td></tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+    </script>
+</body>
+</html>
