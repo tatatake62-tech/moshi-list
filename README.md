@@ -1,5 +1,5 @@
-[index.html](https://github.com/user-attachments/files/27084300/index.html)
-<!DOCTYPE html>
+[moshi.csv](https://github.com/user-attachments/files/27084320/moshi.csv)
+[index.html](https://github.com/user-attachments/files/27084322/index.html)<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -79,18 +79,3 @@
 </script>
 </body>
 </html>
-
-[moshi.csv](https://github.com/user-attachments/files/27084302/moshi.csv)
-模試名,申込開始日,実施日,成績公開日
-第１回全統記述,4/1（水）,5/10（日）,6/15（月）
-第２回全統記述,6/17（水）,8/23（日）,10/13（火）
-第３回全統記述,9/16（水）,10/4（日）,11/20（金）
-第１回全統共テ,4/1（水）,5/3（日）,5/29（金）
-第２回全統共テ,6/17（水）,7/26（日）,9/7（月）
-第３回全統共テ,9/16（水）,10/18（日）,11/16（月）
-全統プレ共テ,9/16（水）,11/15（日）,12/17（木）
-第１回駿台全国,4/2（木）,5/31（日）,7/3（金）
-第２回駿台全国,8/14（金）,9/27（日）,10/31（土）
-第１回駿台ベネッセ共テ,6/1（月）,9/13（日）,11/2（月）
-第２回駿台ベネッセ記述,8/14（金）,10/11（日）,11/30（月）
-第３回駿台ベネッセ共テ,9/7（月）,11/1（日）,12/11（金）
