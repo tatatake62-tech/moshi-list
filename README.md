@@ -1,5 +1,5 @@
-[moshi.csv](https://github.com/user-attachments/files/27084281/moshi.csv)
-[index.html](https://github.com/user-attachments/files/27084282/index.html)<!DOCTYPE html>
+[index.html](https://github.com/user-attachments/files/27084300/index.html)
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -31,39 +31,43 @@
     <script>
     let allMoshi = [];
 
-    // CSVファイルを読み込む（エラーチェック付き）
     fetch('moshi.csv')
         .then(res => {
-            if (!res.ok) throw new Error("CSVファイルが見つかりません！ファイル名を確認して！");
+            if (!res.ok) throw new Error("CSVファイルが読み込めません");
             return res.text();
         })
         .then(data => {
-            console.log("読み込んだデータ:", data); // ブラウザのF12キーで見れるログ
-            const lines = data.trim().split('\n');
-            allMoshi = lines.map(line => {
-                const parts = line.split(',');
-                return { 
-                    name: parts[0] ? parts[0].trim() : "", 
-                    start: parts[1] ? parts[1].trim() : "", 
-                    date: parts[2] ? parts[2].trim() : "", 
-                    res: parts[3] ? parts[3].trim() : "" 
-                };
-            });
-            alert("データの読み込みに成功しました！検索してみてください。");
+            // 改行コードのズレ（Windows/Mac）を修正して1行ずつに分ける
+            const lines = data.split(/\r\n|\n/);
+            
+            allMoshi = lines
+                .filter(line => line.trim() !== "") // 空白行を無視
+                .map(line => {
+                    const parts = line.split(',');
+                    return { 
+                        name: parts[0] ? parts[0].trim() : "", 
+                        start: parts[1] ? parts[1].trim() : "", 
+                        date: parts[2] ? parts[2].trim() : "", 
+                        res: parts[3] ? parts[3].trim() : "" 
+                    };
+                });
+            console.log("読み込み完了:", allMoshi);
         })
-        .catch(err => {
-            alert(err.message); // エラーがあれば画面に警告を出す
-        });
+        .catch(err => alert(err.message));
 
     function search() {
-        const query = document.getElementById('searchInput').value;
+        const query = document.getElementById('searchInput').value.trim();
         const tbody = document.getElementById('tbody');
         tbody.innerHTML = "";
 
-        const results = allMoshi.filter(m => m.name.includes(query));
-        
+        // 検索窓が空なら全表示、文字があれば絞り込み
+        const results = allMoshi.filter(m => {
+            if (query === "") return true; 
+            return m.name.includes(query);
+        });
+
         if (results.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='4'>見つかりませんでした</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='4'>データが見つかりません（CSVの中身を確認してください）</td></tr>";
             return;
         }
 
@@ -75,3 +79,18 @@
 </script>
 </body>
 </html>
+
+[moshi.csv](https://github.com/user-attachments/files/27084302/moshi.csv)
+模試名,申込開始日,実施日,成績公開日
+第１回全統記述,4/1（水）,5/10（日）,6/15（月）
+第２回全統記述,6/17（水）,8/23（日）,10/13（火）
+第３回全統記述,9/16（水）,10/4（日）,11/20（金）
+第１回全統共テ,4/1（水）,5/3（日）,5/29（金）
+第２回全統共テ,6/17（水）,7/26（日）,9/7（月）
+第３回全統共テ,9/16（水）,10/18（日）,11/16（月）
+全統プレ共テ,9/16（水）,11/15（日）,12/17（木）
+第１回駿台全国,4/2（木）,5/31（日）,7/3（金）
+第２回駿台全国,8/14（金）,9/27（日）,10/31（土）
+第１回駿台ベネッセ共テ,6/1（月）,9/13（日）,11/2（月）
+第２回駿台ベネッセ記述,8/14（金）,10/11（日）,11/30（月）
+第３回駿台ベネッセ共テ,9/7（月）,11/1（日）,12/11（金）
