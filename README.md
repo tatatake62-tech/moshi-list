@@ -1,81 +1,66 @@
-[moshi.csv](https://github.com/user-attachments/files/27084320/moshi.csv)
-[index.html](https://github.com/user-attachments/files/27084322/index.html)<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>模試管理システム</title>
+    <title>模試検索</title>
     <style>
-        body { font-family: 'Segoe UI', 'Yu Gothic UI', sans-serif; margin: 20px; background: #f5f7fa; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input { padding: 10px; width: 70%; border: 1px solid #ddd; border-radius: 5px; }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        body { font-family: sans-serif; margin: 20px; }
+        .error { color: red; font-weight: bold; padding: 10px; border: 1px solid red; display: none; }
+        input { padding: 8px; }
+        button { padding: 8px; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #eee; padding: 12px; text-align: center; }
-        th { background: #007bff; color: white; }
-        tr:nth-child(even) { background: #fafafa; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: #f0f0f0; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>模試スケジュール検索</h2>
-        <input type="text" id="searchInput" placeholder="全統 など入力...">
-        <button onclick="search()">検索</button>
-        <table id="resultTable">
-            <thead>
-                <tr><th>模試名</th><th>申込開始</th><th>実施日</th><th>成績公開</th></tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-        </table>
-    </div>
+    <h2>模試スケジュール検索</h2>
+    <div id="errorMsg" class="error"></div>
+    <input type="text" id="searchInput" placeholder="模試名を入力...">
+    <button onclick="search()">検索</button>
+
+    <table id="resultTable">
+        <thead>
+            <tr><th>模試名</th><th>申込開始</th><th>実施日</th><th>成績公開</th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
 
     <script>
-    let allMoshi = [];
+        let allMoshi = [];
+        const fileName = 'moshi.csv'; // ★ここがファイル名！
 
-    fetch('moshi.csv')
-        .then(res => {
-            if (!res.ok) throw new Error("CSVファイルが読み込めません");
-            return res.text();
-        })
-        .then(data => {
-            // 改行コードのズレ（Windows/Mac）を修正して1行ずつに分ける
-            const lines = data.split(/\r\n|\n/);
-            
-            allMoshi = lines
-                .filter(line => line.trim() !== "") // 空白行を無視
-                .map(line => {
-                    const parts = line.split(',');
-                    return { 
-                        name: parts[0] ? parts[0].trim() : "", 
-                        start: parts[1] ? parts[1].trim() : "", 
-                        date: parts[2] ? parts[2].trim() : "", 
-                        res: parts[3] ? parts[3].trim() : "" 
-                    };
+        // ページが開いた瞬間に読み込む
+        fetch(fileName)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`「${fileName}」が見つかりません。GitHubにこの名前でアップされていますか？`);
+                }
+                return res.text();
+            })
+            .then(data => {
+                const lines = data.split(/\r\n|\n/);
+                allMoshi = lines.filter(l => l.trim() !== "").map(line => {
+                    const p = line.split(',');
+                    return { n: p[0], s: p[1], d: p[2], r: p[3] };
                 });
-            console.log("読み込み完了:", allMoshi);
-        })
-        .catch(err => alert(err.message));
+                console.log("読み込み成功");
+            })
+            .catch(err => {
+                const errDiv = document.getElementById('errorMsg');
+                errDiv.innerText = err.message;
+                errDiv.style.display = 'block';
+            });
 
-    function search() {
-        const query = document.getElementById('searchInput').value.trim();
-        const tbody = document.getElementById('tbody');
-        tbody.innerHTML = "";
-
-        // 検索窓が空なら全表示、文字があれば絞り込み
-        const results = allMoshi.filter(m => {
-            if (query === "") return true; 
-            return m.name.includes(query);
-        });
-
-        if (results.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='4'>データが見つかりません（CSVの中身を確認してください）</td></tr>";
-            return;
+        function search() {
+            const q = document.getElementById('searchInput').value.trim();
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = "";
+            const results = allMoshi.filter(m => m.n.includes(q));
+            results.forEach(m => {
+                tbody.innerHTML += `<tr><td>${m.n}</td><td>${m.s}</td><td>${m.d}</td><td>${m.r}</td></tr>`;
+            });
         }
-
-        results.forEach(m => {
-            const row = `<tr><td>${m.name}</td><td>${m.start}</td><td>${m.date}</td><td>${m.res}</td></tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-</script>
+    </script>
 </body>
 </html>
